@@ -111,7 +111,7 @@ I know the weak spots of this prototype and list them here on purpose.
 - Solar panel and battery for off-grid use
 
 ## Author
-Youssef Gaied, Computer Engineering student (Embedded Systems & IoT).
+Youssef Gaied, Computer Engineering licence student (Embedded Systems & IoT).
 
 ## License
 MIT, see [LICENSE](LICENSE).
