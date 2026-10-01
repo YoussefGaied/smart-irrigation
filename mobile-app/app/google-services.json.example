@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "YOUR_VALUE_HERE",
+    "firebase_url": "YOUR_VALUE_HERE",
+    "project_id": "your-project-id",
+    "storage_bucket": "YOUR_VALUE_HERE"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "YOUR_VALUE_HERE",
+        "android_client_info": {
+          "package_name": "com.example.smartirigation"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "YOUR_VALUE_HERE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "YOUR_VALUE_HERE"
+}

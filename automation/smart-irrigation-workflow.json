@@ -1,0 +1,113 @@
+{
+  "name": "Smart Irrigation AI Agent (Template)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [0, 0],
+      "id": "schedule-trigger-id",
+      "name": "Daily Schedule"
+    },
+    {
+      "parameters": {
+        "url": "https://YOUR_PROJECT_ID.firebasedatabase.app/irrigation.json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [208, 0],
+      "id": "http-fetch-data",
+      "name": "Fetch Firebase Telemetry"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:11434/api/generate",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"mistral\",\n  \"prompt\": \"You are an irrigation controller for a farm in Tunisia. Sensor readings: Soil moisture: {{ $json.moisture }}%, Temperature: {{ $json.temperature }}C, Humidity: {{ $json.humidity }}%, Light: {{ $json.light }}. Reply with ONLY one word: IRRIGATE or SKIP\",\n  \"stream\": false\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [416, 0],
+      "id": "ollama-mistral-ai",
+      "name": "Mistral AI Controller"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "check-irrigate",
+              "leftValue": "={{ $json.response.trim() }}",
+              "rightValue": "IRRIGATE",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [624, 0],
+      "id": "if-node-id",
+      "name": "Decision Logic"
+    },
+    {
+      "parameters": {
+        "topic": "YOUR_SECRET_MQTT_TOPIC/command",
+        "sendInputData": false,
+        "message": "IRRIGATE",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mqtt",
+      "typeVersion": 1,
+      "position": [848, -224],
+      "id": "mqtt-out-id",
+      "name": "MQTT Command Dispatcher",
+      "credentials": {
+        "mqtt": {
+          "id": "YOUR_CREDENTIALS_ID",
+          "name": "MQTT Connection"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Daily Schedule": {
+      "main": [[{"node": "Fetch Firebase Telemetry", "type": "main", "index": 0}]]
+    },
+    "Fetch Firebase Telemetry": {
+      "main": [[{"node": "Mistral AI Controller", "type": "main", "index": 0}]]
+    },
+    "Mistral AI Controller": {
+      "main": [[{"node": "Decision Logic", "type": "main", "index": 0}]]
+    },
+    "Decision Logic": {
+      "main": [[{"node": "MQTT Command Dispatcher", "type": "main", "index": 0}]]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Africa/Tunis"
+  }
+}

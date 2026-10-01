@@ -1,0 +1,25 @@
+# Secrets - never commit
+firmware/secrets.h
+**/google-services.json
+local.properties
+*.keystore
+*.jks
+.env
+
+# Android / Gradle
+.gradle/
+**/build/
+.idea/
+*.iml
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Arduino / ESP32 build output
+*.bin
+*.elf
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
